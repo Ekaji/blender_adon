@@ -1,6 +1,7 @@
 import bpy
 import requests
 
+#authentication section
 # register
 def user_register(username,  email, password):
     url = "https://tintype-backend.vercel.app/api/auth/register"
@@ -14,34 +15,6 @@ def user_login(username, password):
     data = {"username": username, "password": password}
     response = requests.post(url, data=data)
     return response.json()
-
-# send messsage
-def send_message(_from, to, message):
-    url = "https://tintype-backend.vercel.app/api/message/addmsg"
-    data = {"from": _from, "to": to, "message": message}
-    response = requests.post(url, data=data)
-    return response.json()
-
-# get messages
-def get_messages(_from, to):
-    url = "https://tintype-backend.vercel.app/api/message/getmsg"
-    data = {"from": _from, "to": to}
-    response = requests.post(url, data=data)
-    return response.json()
-
-class chat_panel(bpy.types.Panel):
-    bl_idname = "CHAT_PT_panel"
-    bl_label = "Chats panel"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_category = "Tintype"
-    bl_icon = "MESH_CUBE"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.prop(context.scene, "chat_message")
-        layout.operator("addon.get_messages")
-        layout.operator("addon.send_message")
 
 class auth_panel(bpy.types.Panel):
     bl_idname = "AUTH_PT_panel"
@@ -88,6 +61,35 @@ class LoginUserOperator(bpy.types.Operator):
         else:
             self.report({"INFO"}, "User Logged in")
         return {"FINISHED"}
+    
+# chat section
+# send messsage
+def send_message(_from, to, message):
+    url = "https://tintype-backend.vercel.app/api/message/addmsg"
+    data = {"from": _from, "to": to, "message": message}
+    response = requests.post(url, data=data)
+    return response.json()
+
+# get messages
+def get_messages(_from, to):
+    url = "https://tintype-backend.vercel.app/api/message/getmsg"
+    data = {"from": _from, "to": to}
+    response = requests.post(url, data=data)
+    return response.json()
+
+class chat_panel(bpy.types.Panel):
+    bl_idname = "CHAT_PT_panel"
+    bl_label = "Chats panel"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Tintype"
+    bl_icon = "MESH_CUBE"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.prop(context.scene, "chat_message")
+        layout.operator("addon.get_messages")
+        layout.operator("addon.send_message")
 
 class SendMessageOperator(bpy.types.Operator):
     bl_idname = "addon.send_message"
